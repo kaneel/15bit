@@ -3,6 +3,12 @@ import styled from 'styled-components'
 
 const SliderWrapper = styled.div`
   margin: 1em 0;
+  display: flex;
+  flex-direction: column;
+`
+
+const SliderLabel = styled.label`
+  text-align: left;
 `
 
 const SliderInput = styled.input`
@@ -11,7 +17,7 @@ const SliderInput = styled.input`
 
 const SliderRow = styled.p`
   display: flex;
-  margin: .5em 0;
+  margin: 0 0 .5em;
 
   input {
     margin: 0 4px;
@@ -19,11 +25,11 @@ const SliderRow = styled.p`
 `
 
 
-const Slider = ({ label, name, value, onChange }) => (
+const Slider = ({ label, name, value, onChange, min, max }) => (
   <SliderWrapper>
-    <label htmlFor={name}>{label}</label>
+    <SliderLabel htmlFor={name}>{label}</SliderLabel>
     <SliderRow>
-      <input type="range" min={0} max={0x1f} value={value} name={name} onChange={onChange}/>
+      <input type="range" min={min || 0} max={max || 0x1f} value={value} name={name} onChange={onChange}/>
       <SliderInput type="text" value={value} onChange={e => {
         let { target: { value } } = e;
         

@@ -4,8 +4,6 @@ Because it's complicated to reason about colours for old consoles when you also
 want them nicely packed, in the right format; it's easier to create a tool to 
 create a palette and export it to a file.
 
-<img src="https://i.imgur.com/2Y8g4hN.png =" width="429" heigth="279" />
-
 ## HOW TO
 
 - npm i 
@@ -14,10 +12,6 @@ create a palette and export it to a file.
 - make some sweet sweet palettes
 
 ## Example of a palette
-
-<img src="https://i.imgur.com/o0Mb1uA.png" width="709" height="740" />
-
-will yield
 
 ```C
 const unsigned int myPal[7] = {
@@ -28,16 +22,16 @@ const unsigned int myPal[7] = {
 ## Current features
 
 - create a 15bit colour and add to a palette
-- replace a colour by clicking on it, change and clicking on replace
-- or click on add again! 
+- replace a colour by clicking on it, pick it, modify and click on swap! 
+- gradient tool: once you have two colours at least, open the gradient tool, 
+  select two adjacent ones, a number of steps, and OK!
 - export colours as a C file containing an array with all colours correctly 
   packed – 2 by 2, little indian
 
 ## TODO
 
-- gradient tool?
 - randomizer?
 - modify all palette colour using some colour algos (hue? tint?)
 - load palette from a .pal file?
-- save and reuse palette?
+- save and reuse palette later?
 

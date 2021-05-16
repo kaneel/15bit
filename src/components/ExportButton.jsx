@@ -1,5 +1,8 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
+
+import { PrimaryButton, SecondaryButton } from './Button'
+import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
 
 function start(variable, length) { 
   // palette colors are packed by 2 so we need to divide and round up as we
@@ -24,50 +27,46 @@ function generateData(color, i, arr) {
   // in case of odd colours, we're adding a black colour
   const colorNext = getColor(arr[i + 1] || {r: 0, g: 0, b: 0})
 
-  return `0x${colorNext}${color}, `
+  return `0x${colorNext}${color}${i + 1 === arr.length ? '': `, `}`
 }
 
 function download(palette, filename, variable) {
     const colors = palette.map(generateData).filter(val => !!val)
-    const file = new Blob([start(variable, palette.length), "\t", ...colors, end], {type: 'text/plain'});
+    const file = new Blob([start(variable, palette.length), "\t", ...colors, end], {type: 'text/plain'})
+    
+    filename = `${filename}.c`
   
     if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(file, `${filename}.c`);
+      window.navigator.msSaveOrOpenBlob(file, filename)
     } else { 
-        const a = document.createElement("a");
-        const url = URL.createObjectURL(file);
+      const a = document.createElement("a")
+      const url = URL.createObjectURL(file)
 
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a);
+      a.click()
+
+      setTimeout(function() {
+        document.body.removeChild(a)
+        window.URL.revokeObjectURL(url)
+      }, 0);
     }
 }
 
 const ExportForm = styled.form`
-  width: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  position: absolute;
+  width: 300px;
   margin: 0 auto;
   text-align: center;
-`
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
-const Button = styled.button`
-  font-size: 2rem;
-  border: 1px solid;
-  margin: 1em 0 0;
-  padding: 8px 15px;
-  background: #fafafa;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:active {
-    transform: translateY(1px);
+  > div {
+    align-items: center;
+    flex-direction: column;
   }
 `
 
@@ -80,7 +79,8 @@ const FormRow = styled.div`
   }
 `
 
-const ExportButton = ({palette}) => {
+const ExportButtonForm = ({ palette } ) => {
+  const modalContext = useContext(ModalContext)
   const [ filename, changeFilename ] = useState('palette')
   const [ variable, changeVariable ] = useState('myPal')
 
@@ -91,17 +91,32 @@ const ExportButton = ({palette}) => {
 
   return (
     <ExportForm onSubmit={onExport}>
-      <FormRow>
-        <p><label htmlFor="filename">Filename:</label></p>
-        <input type="text" name="filename" value={filename} onChange={({target: {value }}) => changeFilename(value)} />
-      </FormRow>
-      <FormRow>
-        <p><label htmlFor="variable">Variable name:</label></p>
-        <input type="text" name="variable" value={variable} onChange={({target: {value }}) => changeVariable(value)} />
-      </FormRow>
-      <Button type="submit">Export</Button>
+      <ModalContentWrapper>
+        <ModalHeader>Save as a file</ModalHeader>
+        <div>
+          <FormRow>
+            <p><label htmlFor="filename">Filename:</label></p>
+            <input type="text" name="filename" value={filename} onChange={({target: {value }}) => changeFilename(value)} />
+          </FormRow>
+          <FormRow>
+            <p><label htmlFor="variable">Variable name:</label></p>
+            <input type="text" name="variable" value={variable} onChange={({target: {value }}) => changeVariable(value)} />
+          </FormRow>
+        </div>
+        <ModalActions>
+          <SecondaryButton type="button" onClick={modalContext.closeModal}>Cancel</SecondaryButton>
+          <PrimaryButton type="submit" onClick={() => download(palette, filename, variable)}>OK</PrimaryButton>
+        </ModalActions>
+      </ModalContentWrapper>
     </ExportForm>
   )
+}
+
+const ExportButton = ({palette}) => {
+  const modalContext = useContext(ModalContext)
+  const modalContent = () => (<ExportButtonForm palette={palette} />)
+
+  return <PrimaryButton disabled={palette.length === 0} small type="button" onClick={() => modalContext.openModal(modalContent)}>SAVE</PrimaryButton>
 }
 
 export default ExportButton
