@@ -43,7 +43,8 @@ const ModalHeader = styled.h1`
 
 const ModalActions = styled.div`
   margin: 2em 0 0;
-  text-right: left;
+  display: flex;
+  justify-content: center;
 `
 
 const ModalContentWrapper = styled.div`
@@ -61,10 +62,11 @@ class ModalProvider extends Component {
 
     this.openModal = this.openModal.bind(this)
     this.closeModal = this.closeModal.bind(this)
+    this.onKeyup = this.onKeyup.bind(this)
   }
 
   openModal(content) {
-    document.addEventListener('keyup', this.closeModal)
+    document.addEventListener('keyup', this.onKeyup)
 
     this.setState({
       content,
@@ -73,12 +75,20 @@ class ModalProvider extends Component {
   }
 
   closeModal() {
-    document.removeEventListener('keyup', this.closeModal)
+    document.removeEventListener('keyup', this.onKeyup)
 
     this.setState({
       content: null,
       isOpen: false
     })
+  }
+
+  onKeyup({ key }) {
+    if (key !== 'Escape') {
+      return;
+    }
+
+    this.closeModal()
   }
 
   render() {

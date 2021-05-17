@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
+import { ArrowReturnLeft, Save } from '@styled-icons/bootstrap'
 
 import { PrimaryButton, SecondaryButton } from './Button'
 import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
@@ -27,11 +28,11 @@ function generateData(color, i, arr) {
   // in case of odd colours, we're adding a black colour
   const colorNext = getColor(arr[i + 1] || {r: 0, g: 0, b: 0})
 
-  return `0x${colorNext}${color}${i + 1 === arr.length ? '': `, `}`
+  return `0x${colorNext}${color}`
 }
 
 function download(palette, filename, variable) {
-    const colors = palette.map(generateData).filter(val => !!val)
+    const colors = palette.map(generateData).filter(val => !!val).join(',')
     const file = new Blob([start(variable, palette.length), "\t", ...colors, end], {type: 'text/plain'})
     
     filename = `${filename}.c`
@@ -104,8 +105,8 @@ const ExportButtonForm = ({ palette } ) => {
           </FormRow>
         </div>
         <ModalActions>
-          <SecondaryButton type="button" onClick={modalContext.closeModal}>Cancel</SecondaryButton>
-          <PrimaryButton type="submit" onClick={() => download(palette, filename, variable)}>OK</PrimaryButton>
+          <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
+          <PrimaryButton type="submit"><Save />OK!</PrimaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </ExportForm>
@@ -116,7 +117,7 @@ const ExportButton = ({palette}) => {
   const modalContext = useContext(ModalContext)
   const modalContent = () => (<ExportButtonForm palette={palette} />)
 
-  return <PrimaryButton disabled={palette.length === 0} small type="button" onClick={() => modalContext.openModal(modalContent)}>SAVE</PrimaryButton>
+  return <PrimaryButton disabled={palette.length === 0} small type="button" onClick={() => modalContext.openModal(modalContent)}><Save /> SAVE</PrimaryButton>
 }
 
 export default ExportButton

@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { SecondaryButton } from './Button'
+
 const SliderWrapper = styled.div`
   margin: 1em 0;
   display: flex;
@@ -15,7 +17,7 @@ const SliderInput = styled.input`
   width: 20px;
 `
 
-const SliderRow = styled.p`
+const SliderRow = styled.div`
   display: flex;
   margin: 0 0 .5em;
 
@@ -24,19 +26,48 @@ const SliderRow = styled.p`
   }
 `
 
+const SliderButtonGroup = styled.div`
+  display: flex;
 
-const Slider = ({ label, name, value, onChange, min, max }) => (
+  button, input {
+    margin: 0;
+    border: 1px solid;
+  }
+
+  button:active {
+    transform: none;
+    padding-top: 5px;
+    padding-bottom: 3px;
+  }
+
+  input:focus {
+    outline: none;
+  }
+
+  button:first-child {
+    border-right: 0;
+  }
+
+  button:last-child {
+    border-left: 0;
+  }
+
+  input {
+    text-align: center;
+  }
+`
+
+
+const Slider = ({ label, name, value, onChange, min = 0, max = 0x1f }) => (
   <SliderWrapper>
     <SliderLabel htmlFor={name}>{label}</SliderLabel>
     <SliderRow>
-      <input type="range" min={min || 0} max={max || 0x1f} value={value} name={name} onChange={onChange}/>
-      <SliderInput type="text" value={value} onChange={e => {
-        let { target: { value } } = e;
-        
-        if (value > 31) value = value.substr(0, 1)
-
-        onChange({ target: { value } })
-      }} />
+      <input type="range" min={min} max={max} value={value} name={name} onChange={onChange}/>
+      <SliderButtonGroup>
+        <SecondaryButton type="button" small onClick={() => onChange({target: { value: Math.max(min, value - 1) } })}>-</SecondaryButton>
+        <SliderInput readOnly="readonly" type="text" value={value}  />
+        <SecondaryButton type="button" small onClick={() => onChange({target: { value: Math.min(max, value + 1) } })}>+</SecondaryButton>
+      </SliderButtonGroup>
     </SliderRow>
   </SliderWrapper>
 )

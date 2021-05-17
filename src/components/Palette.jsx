@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useCallback } from 'react'
 import styled from 'styled-components'
 
+import KeyboardContext from '../context/Keyboard'
 import PaletteColor, { PaletteColorWrapper } from './PaletteColor'
 import Color, { ColorBlock } from './Color'
 
@@ -122,8 +123,13 @@ const PaletteOverlay = styled.div`
 
 const PaletteSection = styled.section`
   position: relative;
-  margin: 0 auto 2em;
+  margin: 0 auto;
   width: 1004px;
+`
+
+const ScrollableDiv = styled.div`
+  max-height: 400px;
+  overflow-y: scroll;
 `
 
 const MainPalette = ({palette, onDelete, onSwap, onPick}) => {
@@ -151,17 +157,98 @@ const MainPalette = ({palette, onDelete, onSwap, onPick}) => {
   )
 }
 
-const PaletteSelector = ({palette, selected, onSelect}) => (
-  <PaletteSection>
-    <PaletteWrapper>
-      { palette.map(({hex}, i) => (
-        <SelectorColorItem key={i} selected={selected.includes(i)}>
-          <Color hex={hex} onClick={() => onSelect(i)} small />
-        </SelectorColorItem>
-      )) }
-    </PaletteWrapper>
-  </PaletteSection>
-)
+function reducer(state, action) {
+  switch (action.type) {
+    case 'selectColour': {
+      const { palette, selected } = state
+      const { index, modifiers } = action.payload
+      const color = palette[index]
+
+      if (modifiers.includes('Meta')) {
+        if (selected.includes(index)) {
+          return { ...state, selected: selected.filter(i => i !== index) }
+        }
+        else {
+          return { ...state, selected: [...selected, index] }
+        }
+      }
+
+
+      if (modifiers.includes('Shift') && selected.length > 0) {
+        const newSelected = (function(array, end) {
+          const last = array.pop()
+          const newArr = new Array(end > last ? end - last + 1 : last - end + 1)
+            .fill(0)
+            .map((_, i) => {
+              return end > last ? last + i : last - i
+            })
+
+          return [...array, ...newArr]
+        }([...selected], index))
+
+        return { ...state, selected: newSelected }
+      }
+
+      return { ...state, selected: [index] }
+    }
+    case 'changeLuminosity': {
+      return {
+        ...state,
+        luminosity: action.payload
+      }
+    }
+  }
+}
+
+const PaletteSelector = ({palette, selected, onSelect, maxSelection}) => {
+  const { keys } = useContext(KeyboardContext)
+
+  let newState;
+
+  const selectColour = useCallback((index) => {
+      const color = palette[index]
+
+      if (keys.includes('Meta')) {
+        if (selected.includes(index)) {
+          return onSelect(selected.filter(i => i !== index))
+        }
+        else {
+           return onSelect([...selected, index])
+        }
+      }
+
+
+      if (keys.includes('Shift') && selected.length > 0) {
+         return onSelect((function(array, end) {
+          const last = array.pop()
+          const newArr = new Array(end > last ? end - last + 1 : last - end + 1)
+            .fill(0)
+            .map((_, i) => {
+              return end > last ? last + i : last - i
+            })
+
+          return [...array, ...newArr]
+        }([...selected], index)))
+      }
+
+      onSelect([index])
+  }, [selected, keys])
+  
+
+  return (
+    <PaletteSection>
+      <ScrollableDiv>
+        <PaletteWrapper>
+          { palette.map(({hex}, i) => (
+            <SelectorColorItem key={i} selected={selected.includes(i)}>
+              <Color hex={hex} onClick={() => selectColour(i)} small />
+            </SelectorColorItem>
+          )) }
+        </PaletteWrapper>
+      </ScrollableDiv>
+    </PaletteSection>
+  )
+}
 
 export default MainPalette
 export { PaletteSelector }

@@ -1,53 +1,16 @@
-import React, { useCallback, useContext, useReducer } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
+import { ArrowReturnLeft, Check2 } from '@styled-icons/bootstrap'
 
+import { applyGradient } from '../helpers'
 import Slider from './Slider'
 import { PaletteSelector } from './Palette'
 import { PrimaryButton, SecondaryButton } from './Button'
 import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
 
-const initialState = { gradientSteps: 1, selected: [] }
-
 const ModalSubheader = styled.h2`
   text-align: left;
 `
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'selectColour': {
-      const { selected } = state
-
-      if (selected.includes(action.payload)) {
-        return {
-          ...state, 
-          selected: selected.filter((item) => item !== action.payload)
-        }
-      }
-
-      if(selected.length === 2) {
-        return { ...state }
-      }
-
-      if(selected.length > 0 && 
-        (selected[0] - action.payload !== 1 && 
-        action.payload - selected[0] !== 1)
-      ) {
-        return { ...state }
-      }
-
-      return {
-        ...state,
-        selected: [...selected, action.payload]
-      }
-    }
-    case 'changeGradientSteps': {
-      return {
-        ...state,
-        gradientSteps: action.payload
-      }
-    }
-  }
-}
 
 const GradientToolContentForm = styled.form`
   position: absolute;
@@ -67,27 +30,45 @@ const GradientToolContentForm = styled.form`
 
 const GradientToolContent = ({ palette, onGradientSubmit }) => {
   const modalContext = useContext(ModalContext)
-  const [state, dispatch] = useReducer(reducer, {...initialState, palette: [...palette] });
-  const { gradientSteps, selected } = state;
+  const [selected, changeSelected] = useState([])
+  const [steps, changeSteps] = useState(1)
+  const [statePal, changePalette] = useState([...palette])
 
-  // actions
-  const changeGradientSteps = useCallback(({ target: { value } }) => dispatch({ type: 'changeGradientSteps', payload: value }))
-  const selectColour = useCallback((index) => dispatch({ type: 'selectColour', payload: index }))
+  const [sel1, sel2] = selected;
+
+  const onStepsChanged = useCallback(({ target: { value } }) => {
+    if (selected.length === 2) {
+      changePalette(applyGradient(palette, selected, value + 2))
+    }
+
+    changeSteps(parseInt(value, 10))
+  }, [statePal, selected, sel1, sel2, steps])
+
+  const onSelectionChange = useCallback((newSelected) => {
+    if (newSelected.length > 2) return changeSelected(newSelected.slice(0, 2))
+
+    if (newSelected.length === 1)  {
+      onStepsChanged({ target: { value: 1 }});
+    }
+    changeSelected(newSelected)
+  }, [selected])
+
+  const areSelectionsValid = Math.abs(selected[0] - selected[1]) === 1
 
   return (
     <GradientToolContentForm onSubmit={e => { 
       e.preventDefault()
-      onGradientSubmit(selected, gradientSteps)
+      onGradientSubmit(statePal)
       modalContext.closeModal()
     }}>
       <ModalContentWrapper>
         <ModalHeader>Gradient tool</ModalHeader>
         <ModalSubheader>Choose 2 adjacent colours</ModalSubheader>
-        <PaletteSelector onSelect={selectColour} selected={selected} palette={palette} />
-        <Slider label="Gradient steps" min="1" name="gradient-steps" value={gradientSteps} onChange={changeGradientSteps} />
+        <PaletteSelector onSelect={onSelectionChange} selected={selected} palette={statePal} maxSelection={2} />
+        <Slider label="Gradient steps" min={1} max={100} name="gradient-steps" value={steps} onChange={onStepsChanged} />
         <ModalActions>
-          <SecondaryButton type="button" onClick={modalContext.closeModal}>Cancel</SecondaryButton>
-          <PrimaryButton disabled={selected.length < 2} type="submit">OK</PrimaryButton>
+          <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
+          <PrimaryButton disabled={selected.length < 2 && areSelectionsValid} type="submit"><Check2 />OK</PrimaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </GradientToolContentForm>

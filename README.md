@@ -13,9 +13,13 @@ create a palette and export it to a file.
 
 ## Example of a palette
 
+https://user-images.githubusercontent.com/1093029/118471041-378f8380-b6ff-11eb-91e5-0399711c9f0c.mov
+
+<img src="https://i.imgur.com/7qCGfU2.png?1" width="1011" />
+
 ```C
-const unsigned int myPal[7] = {
-	0x76497549, 0x36573649, 0x51573557, 0x23572157, 0x4b5c4b57, 0x709c489c, 0x137c109c, 
+const unsigned int myPal[10] = {
+	0x7e327e31, 0x7e347e33, 0x7e377e35, 0x7e397e38, 0x7e3b7e3a, 0x7e3d7e3c, 0x7e3f7e3e, 0x54117e3f, 0x54137e3f, 0x54157e3f 
 };
 ```
 

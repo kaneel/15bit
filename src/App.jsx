@@ -1,7 +1,6 @@
 import React, { useReducer, useState, useCallback } from 'react'
-import { createGlobalStyle } from 'styled-components'
-
 import styled from 'styled-components'
+import { createGlobalStyle } from 'styled-components'
 
 import { KeyboardProvider } from './context/Keyboard'
 import { ModalProvider } from './context/Modal'
@@ -12,26 +11,11 @@ import Palette from './components/Palette'
 import ExportButton from './components/ExportButton'
 
 import GradientTool from './components/GradientTool'
+import LuminosityTool from './components/LuminosityTool'
+
+import { convertRGBToHex } from './helpers'
 
 const initialState = {r: 0, g: 0, b: 0, hex: "000000", palette: [], selected: [], gradientSteps: 1};
-
-function convert({r, g, b}) {
-  const f = 255 / 31
-
-  const cR = Math.floor(r * f)
-  const cG = Math.floor(g * f)
-  const cB = Math.floor(b * f)
-
-  r = cR < 10 ? `0${cR}` : cR;
-  g = cG < 10 ? `0${cG}` : cG;
-  b = cB < 10 ? `0${cB}` : cB;
-
-  r = r.toString(16);
-  g = g.toString(16);
-  b = b.toString(16);
-
-  return `${r}${g}${b}`
-}
 
 function reducer(state, action) {
   switch (action.type) {
@@ -40,7 +24,7 @@ function reducer(state, action) {
       const { r, g, b } = state
       const parsedValue = parseInt(value, 10);
 
-      return {...state, [color]: parsedValue, hex: convert({r, g, b, [color]: parsedValue})};
+      return {...state, [color]: parsedValue, hex: convertRGBToHex({r, g, b, [color]: parsedValue})};
     }
     case 'swapColor': {
       const { palette, r, g, b, hex } = state
@@ -93,43 +77,8 @@ function reducer(state, action) {
         selected: []
       }
     }
-    case 'makeGradient': {
-      const { palette } = state
-      let { steps, selected } = action.payload
-
-      steps = parseInt(steps, 10)
-      selected = selected.sort()
-
-      const stepFactor = 1 / (steps - 1)
-
-      let [color1, color2] = selected
-      let final = []
-
-      const { r: r1, g: g1, b: b1 } = palette[color1]
-      const { r: r2, g: g2, b: b2 } = palette[color2]
-
-      color1 = [r1, g1, b1]
-      color2 = [r2, g2, b2]
-
-      for (let i = 0; i < steps; i++) {
-        const factor = stepFactor * i
-        const result = color1.slice()
-
-        for (let color = 0; color < 3; color++) {
-          result[color] = Math.round(result[color] + (factor * (color2[color] - color1[color])))
-        }
-
-        final.push(result)
-      }
-
-      const palToInject = final.map(([r, g, b]) => {
-        return { r, g, b, hex: convert({r, g, b})}
-      }) 
-
-      const palStart = selected[0] === 0 ? [] : palette.slice(0, selected[0])
-      const palEnd = selected[1] === palette.length - 1 ? [] : palette.slice(selected[1] + 1)
-
-      return {...state, palette: [...palStart, ...palToInject, ...palEnd] }
+    case 'changePalette': {
+      return { ...state, palette: action.payload }
     }
     default: 
       return state
@@ -160,6 +109,8 @@ const ColorPickSection = styled.section`
 
 const PaletteToolsSection = styled.section`
   margin: 2em 0;
+  display: flex;
+  justify-content: center;
 `
 
 const AddColorButton = styled.button`
@@ -199,7 +150,8 @@ const App = () => {
   const swapColor = useCallback((index) => dispatch({type: 'swapColor', payload: index }))
 
   // tool actions
-  const makeGradient = useCallback((selected, steps) => dispatch({type: 'makeGradient', payload: { selected, steps } }))
+  const makeGradient = useCallback(newPalette => dispatch({type: 'changePalette', payload: newPalette }))
+  const changeLuminosity = useCallback(newPalette => dispatch({type: 'changePalette', payload: newPalette }))
 
   const { r, g, b, palette, hex, selected } = state;
 
@@ -224,6 +176,7 @@ const App = () => {
           <PaletteToolsSection>
             <ExportButton palette={palette}>Export</ExportButton>
             <GradientTool palette={palette} enabled={palette.length > 1} onGradientSubmit={makeGradient} />
+            <LuminosityTool palette={palette} enabled={palette.length > 0} onLuminositySubmit={changeLuminosity} />
           </PaletteToolsSection>
           <Palette palette={palette} selected={selected} onPick={pickColor} onDelete={deleteColor} onSwap={swapColor} />
         </AppWrapper>
