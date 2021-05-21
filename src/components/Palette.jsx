@@ -132,6 +132,17 @@ const ScrollableDiv = styled.div`
   overflow-y: scroll;
 `
 
+const MicroColorItem = styled.li`
+  position: relative;
+  width: 20px;
+  height: 20px;
+
+  ${ColorBlock} {
+    width: 20px;
+    height: 20px;
+  }
+`
+
 const MainPalette = ({palette, onDelete, onSwap, onPick}) => {
   const [selected, changeSelected] = useState(-1);
 
@@ -250,6 +261,22 @@ const PaletteSelector = ({palette, selected, onSelect, maxSelection}) => {
   )
 }
 
+const MicroPalette = ({palette}) => {
+  return (
+    <PaletteSection>
+      <ScrollableDiv>
+        <PaletteWrapper>
+          { palette.map(({hex}, i) => (
+            <MicroColorItem micro key={i}>
+              <Color hex={hex} small />
+            </MicroColorItem>
+          )) }
+        </PaletteWrapper>
+      </ScrollableDiv>
+    </PaletteSection>
+  )
+}
+
 export default MainPalette
-export { PaletteSelector }
+export { PaletteSelector, MicroPalette }
 

@@ -9,6 +9,7 @@ import Slider from './components/Slider'
 import Color from './components/Color'
 import Palette from './components/Palette'
 import ExportButton from './components/ExportButton'
+import ImportButton from './components/ImportButton'
 
 import GradientTool from './components/GradientTool'
 import LuminosityTool from './components/LuminosityTool'
@@ -150,8 +151,7 @@ const App = () => {
   const swapColor = useCallback((index) => dispatch({type: 'swapColor', payload: index }))
 
   // tool actions
-  const makeGradient = useCallback(newPalette => dispatch({type: 'changePalette', payload: newPalette }))
-  const changeLuminosity = useCallback(newPalette => dispatch({type: 'changePalette', payload: newPalette }))
+  const changePalette = useCallback(newPalette => dispatch({type: 'changePalette', payload: newPalette }))
 
   const { r, g, b, palette, hex, selected } = state;
 
@@ -174,9 +174,10 @@ const App = () => {
             </div>
           </ColorPickSection>
           <PaletteToolsSection>
-            <ExportButton palette={palette}>Export</ExportButton>
-            <GradientTool palette={palette} enabled={palette.length > 1} onGradientSubmit={makeGradient} />
-            <LuminosityTool palette={palette} enabled={palette.length > 0} onLuminositySubmit={changeLuminosity} />
+            <ExportButton palette={palette} />
+            <ImportButton palette={palette} onImportSubmit={changePalette} />
+            <GradientTool palette={palette} onGradientSubmit={changePalette} />
+            <LuminosityTool palette={palette} onLuminositySubmit={changePalette} />
           </PaletteToolsSection>
           <Palette palette={palette} selected={selected} onPick={pickColor} onDelete={deleteColor} onSwap={swapColor} />
         </AppWrapper>

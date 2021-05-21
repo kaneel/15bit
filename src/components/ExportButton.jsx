@@ -117,7 +117,7 @@ const ExportButton = ({palette}) => {
   const modalContext = useContext(ModalContext)
   const modalContent = () => (<ExportButtonForm palette={palette} />)
 
-  return <PrimaryButton disabled={palette.length === 0} small type="button" onClick={() => modalContext.openModal(modalContent)}><Save /> SAVE</PrimaryButton>
+  return <PrimaryButton disabled={palette.length === 0} small type="button" onClick={() => modalContext.openModal(modalContent)}><Save /> Export</PrimaryButton>
 }
 
 export default ExportButton

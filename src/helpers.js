@@ -34,16 +34,32 @@ function applyGradient(palette, selected, steps) {
   return [...palStart, ...palToInject, ...palEnd]
 }
 
-function convertRGBToHex({r, g, b}) {
+function convertRGB24toRGB15({r, g, b}) {
+  const f = 31 / 255
+
+  r = Math.floor(r * f)
+  g = Math.floor(g * f)
+  b = Math.floor(b * f)
+
+  return { r, g, b } 
+}
+
+function convertRGB15toRGB24({r, g, b}) {
   const f = 255 / 31
 
-  const cR = Math.floor(r * f)
-  const cG = Math.floor(g * f)
-  const cB = Math.floor(b * f)
+  r = Math.floor(r * f)
+  g = Math.floor(g * f)
+  b = Math.floor(b * f)
 
-  r = cR < 10 ? `0${cR}` : cR;
-  g = cG < 10 ? `0${cG}` : cG;
-  b = cB < 10 ? `0${cB}` : cB;
+  return { r, g, b } 
+}
+
+function convertRGBToHex(color) {
+  let {r, g, b} = convertRGB15toRGB24(color)
+
+  r = r < 10 ? `0${r}` : r;
+  g = g < 10 ? `0${g}` : g;
+  b = b < 10 ? `0${b}` : b;
 
   r = r.toString(16);
   g = g.toString(16);
@@ -52,4 +68,4 @@ function convertRGBToHex({r, g, b}) {
   return `${r}${g}${b}`
 }
 
-export { convertRGBToHex, applyGradient }
+export { convertRGBToHex, convertRGB15toRGB24, convertRGB24toRGB15, applyGradient }
