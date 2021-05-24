@@ -75,12 +75,12 @@ const GradientToolContent = ({ palette, onGradientSubmit }) => {
   )
 }
 
-const GradientTool = ({ enabled, palette, onGradientSubmit }) => {
+const GradientTool = ({ palette, onGradientSubmit }) => {
   const modalContext = useContext(ModalContext)
   const modalContent = () => (<GradientToolContent palette={palette} onGradientSubmit={onGradientSubmit} />)
 
   return (
-    <SecondaryButton small disabled={!enabled} onClick={() => modalContext.openModal(modalContent)}>Gradient</SecondaryButton>
+    <SecondaryButton small disabled={!(palette.length > 1)} onClick={() => modalContext.openModal(modalContent)}>Gradient</SecondaryButton>
   )
 }
 

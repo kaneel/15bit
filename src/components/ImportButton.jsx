@@ -1,8 +1,9 @@
 import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
-import { ArrowReturnLeft, ArrowBarDown } from '@styled-icons/bootstrap'
+import { ArrowReturnLeft, FileArrowUp } from '@styled-icons/bootstrap'
 
 import { PrimaryButton, SecondaryButton } from './Button'
+import Warning from './Warning'
 import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
 import { PaletteSelector, MicroPalette } from './Palette'
 import { convertRGBToHex, convertRGB24toRGB15 } from '../helpers'
@@ -91,10 +92,10 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
         modalContext.closeModal()
       }} enctype="multipart/form-data">
       <ModalContentWrapper>
-        <ModalHeader>Save as a file</ModalHeader>
+        <ModalHeader>Import</ModalHeader>
         <MicroPalette palette={palette} />
         <div>
-          <p>/!\ Only for a JASC PAL atm, will try later importing different swatches/palettes</p>
+          <Warning>/!\ Only for a JASC PAL atm, will try later importing different swatches/palettes</Warning>
           { error && <p>{error.message}</p>}
           <FormRow>
             <p><label htmlFor="file">Filename:</label></p>
@@ -103,7 +104,7 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
         </div>
         <ModalActions>
           <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
-          <PrimaryButton type="submit"><ArrowBarDown />OK!</PrimaryButton>
+          <PrimaryButton type="submit"><FileArrowUp />OK!</PrimaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </ImportForm>
@@ -114,7 +115,7 @@ const ImportButton = ({ onImportSubmit }) => {
   const modalContext = useContext(ModalContext)
   const modalContent = () => (<ImportButtonForm onPaletteSubmit={onImportSubmit} />)
 
-  return <PrimaryButton small type="button" onClick={() => modalContext.openModal(modalContent)}><ArrowBarDown /> Import</PrimaryButton>
+  return <PrimaryButton small type="button" onClick={() => modalContext.openModal(modalContent)}><FileArrowUp /> Import</PrimaryButton>
 }
 
 export default ImportButton

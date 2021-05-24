@@ -8,6 +8,8 @@ import { ModalProvider } from './context/Modal'
 import Slider from './components/Slider'
 import Color from './components/Color'
 import Palette from './components/Palette'
+import SaveButton from './components/SaveButton'
+import LoadButton from './components/LoadButton'
 import ExportButton from './components/ExportButton'
 import ImportButton from './components/ImportButton'
 
@@ -160,6 +162,12 @@ const App = () => {
       <GlobalStyle />
       <ModalProvider>
         <AppWrapper>
+          <PaletteToolsSection>
+            <SaveButton palette={palette} />
+            <LoadButton onLoadSubmit={changePalette} />
+            <ExportButton palette={palette} />
+            <ImportButton onImportSubmit={changePalette} />
+          </PaletteToolsSection>
           <ColorPickSection>
             <div>
               <Slider label="Red" name="R" value={r} onChange={changeR} />
@@ -174,8 +182,6 @@ const App = () => {
             </div>
           </ColorPickSection>
           <PaletteToolsSection>
-            <ExportButton palette={palette} />
-            <ImportButton palette={palette} onImportSubmit={changePalette} />
             <GradientTool palette={palette} onGradientSubmit={changePalette} />
             <LuminosityTool palette={palette} onLuminositySubmit={changePalette} />
           </PaletteToolsSection>

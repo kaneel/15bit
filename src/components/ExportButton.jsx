@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
-import { ArrowReturnLeft, Save } from '@styled-icons/bootstrap'
+import { ArrowReturnLeft, FileArrowDown } from '@styled-icons/bootstrap'
 
 import { PrimaryButton, SecondaryButton } from './Button'
 import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
@@ -93,7 +93,7 @@ const ExportButtonForm = ({ palette } ) => {
   return (
     <ExportForm onSubmit={onExport}>
       <ModalContentWrapper>
-        <ModalHeader>Save as a file</ModalHeader>
+        <ModalHeader>Export</ModalHeader>
         <div>
           <FormRow>
             <p><label htmlFor="filename">Filename:</label></p>
@@ -106,7 +106,7 @@ const ExportButtonForm = ({ palette } ) => {
         </div>
         <ModalActions>
           <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
-          <PrimaryButton type="submit"><Save />OK!</PrimaryButton>
+          <PrimaryButton type="submit"><FileArrowDown />OK!</PrimaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </ExportForm>
@@ -117,7 +117,7 @@ const ExportButton = ({palette}) => {
   const modalContext = useContext(ModalContext)
   const modalContent = () => (<ExportButtonForm palette={palette} />)
 
-  return <PrimaryButton disabled={palette.length === 0} small type="button" onClick={() => modalContext.openModal(modalContent)}><Save /> Export</PrimaryButton>
+  return <PrimaryButton disabled={palette.length === 0} small type="button" onClick={() => modalContext.openModal(modalContent)}><FileArrowDown /> Export</PrimaryButton>
 }
 
 export default ExportButton

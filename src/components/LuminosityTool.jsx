@@ -124,12 +124,12 @@ const LuminosityToolContent = ({ palette, submitLuminosity }) => {
   )
 }
 
-const LuminosityTool = ({ enabled, palette, onLuminositySubmit }) => {
+const LuminosityTool = ({ palette, onLuminositySubmit }) => {
   const modalContext = useContext(ModalContext)
   const modalContent = () => (<LuminosityToolContent palette={palette} submitLuminosity={onLuminositySubmit} />)
 
   return (
-    <SecondaryButton small disabled={!enabled} onClick={() => modalContext.openModal(modalContent)}><Sun />Luminosity</SecondaryButton>
+    <SecondaryButton small disabled={!(palette.length > 0)} onClick={() => modalContext.openModal(modalContent)}><Sun />Luminosity</SecondaryButton>
   )
 }
 

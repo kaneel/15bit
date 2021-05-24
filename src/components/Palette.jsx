@@ -136,6 +136,7 @@ const MicroColorItem = styled.li`
   position: relative;
   width: 20px;
   height: 20px;
+  margin: 0;
 
   ${ColorBlock} {
     width: 20px;
@@ -263,17 +264,15 @@ const PaletteSelector = ({palette, selected, onSelect, maxSelection}) => {
 
 const MicroPalette = ({palette}) => {
   return (
-    <PaletteSection>
-      <ScrollableDiv>
-        <PaletteWrapper>
-          { palette.map(({hex}, i) => (
-            <MicroColorItem micro key={i}>
-              <Color hex={hex} small />
-            </MicroColorItem>
-          )) }
-        </PaletteWrapper>
-      </ScrollableDiv>
-    </PaletteSection>
+    <ScrollableDiv>
+      <PaletteWrapper>
+        { palette.map(({hex}, i) => (
+          <MicroColorItem micro key={i}>
+            <Color hex={hex} small />
+          </MicroColorItem>
+        )) }
+      </PaletteWrapper>
+    </ScrollableDiv>
   )
 }
 
