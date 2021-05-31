@@ -39,9 +39,6 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
   const [palette, changePalette] = useState([])
   const [error, changeError] = useState(null)
 
-  const submitImport = useCallback(e => {
-  })
-
   const handleFileChange = useCallback(e => {
     const { target: { files } } = e
     e.preventDefault()
@@ -50,25 +47,27 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
     fr.onload = e => {
       const contents = e.target.result.split('\n')
 
-      console.log(contents)
       /*
        * 'JASC-PAL
        *  0100
        *  number of colors
        *  R G B
        */
-      const header = contents.unshift()
+      const header = contents.shift()
 
-      if (header !== 'JASC PAL') return changeError(new Error('Not JASC PAL'))
+      if (header !== 'JASC-PAL') return changeError(new Error('Not JASC PAL'))
 
       // remove the numbers on the second row
-      contents.unshift()
+      contents.shift()
 
-      const palette = new Array(contentsLength).fill(null).map((_, i) => {
-        const [r, g, b] = convertRGB24toRGB15(contents[i].split(' '))
-        const ratio = 31/255
+      const contentsLength = contents.shift()
 
-        hex = convertRGBToHex({r, g, b})
+      const palette = contents.map(content => {
+        if (content === '') return null
+
+        const [ rr, gg, bb ] = content.split(' ')
+        const {r, g, b} = convertRGB24toRGB15({ r: rr, g: gg, b: bb })
+        const hex = convertRGBToHex({r, g, b})
 
         return {
           r,
@@ -76,7 +75,7 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
           b, 
           hex 
         }
-      })
+      }).filter(color => !!color)
 
       changeContents(e.target.result)
       changePalette(palette)
@@ -88,7 +87,7 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
   return (
     <ImportForm onSubmit={e => { 
         e.preventDefault()
-        submitImport(palette)
+        onPaletteSubmit(palette)
         modalContext.closeModal()
       }} enctype="multipart/form-data">
       <ModalContentWrapper>

@@ -9,6 +9,7 @@ const Button = styled.button`
   font-size: 1.5rem;
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   &:active {
     transform: translateY(1px);
@@ -20,14 +21,28 @@ const Button = styled.button`
     margin: 0 10px 0 0;
   }
 
-  ${({small}) => small && `font-size: 1rem; padding: 4px 8px;`}
+  ${props => props.small && `font-size: 1rem; padding: 4px 8px;`}
+  ${props => props.active && `background: #eee`}
+
 `
 
 const PrimaryButton = styled(Button)``
 const SecondaryButton = styled(Button)``
 
+const ButtonGroup = styled.div`
+  display: flex; 
+  justify-content: center;
+  margin-left: 1px;
+
+  ${Button} {
+    margin: -1px 0 0 -1px;
+    position: relative;
+  }
+`
+
 export {
   PrimaryButton, 
-  SecondaryButton
+  SecondaryButton,
+  ButtonGroup
 }
 

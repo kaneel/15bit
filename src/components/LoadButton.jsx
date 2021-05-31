@@ -84,8 +84,6 @@ const LoadButtonForm = ({ onLoadSubmit }) => {
     changePalettes(newPalettes)
   }, [palettes])
 
-    console.log(palettes)
-
   return (
     <LoadForm>
       <ModalContentWrapper>
