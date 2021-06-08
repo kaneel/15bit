@@ -2,11 +2,11 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowReturnLeft, FileArrowUp } from '@styled-icons/bootstrap'
 
-import { PrimaryButton, SecondaryButton } from './Button'
-import Warning from './Warning'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
-import { PaletteSelector, MicroPalette } from './Palette'
-import { convertRGBToHex, convertRGB24toRGB15 } from '../helpers'
+import { PrimaryButton, SecondaryButton } from '../../components/Button'
+import Alert from '../../components/Alert'
+import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
+import { MicroPalette } from './Palette'
+import { convertRGBToHex, convertRGB24toRGB15 } from '../../helpers'
 
 const ImportForm = styled.form`
   position: absolute;
@@ -35,9 +35,8 @@ const FormRow = styled.div`
 
 const ImportButtonForm = ({ onPaletteSubmit }) => {
   const modalContext = useContext(ModalContext)
-  const [contents, changeContents] = useState('')
-  const [palette, changePalette] = useState([])
-  const [error, changeError] = useState(null)
+  const [palette, setPalette] = useState([])
+  const [error, setError] = useState(null)
 
   const handleFileChange = useCallback(e => {
     const { target: { files } } = e
@@ -55,12 +54,16 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
        */
       const header = contents.shift()
 
-      if (header !== 'JASC-PAL') return changeError(new Error('Not JASC PAL'))
+      if (header !== 'JASC-PAL') {
+        setPalette([])
+        setError(new Error('Not a JASC PAL'))
+        return;
+      }
 
       // remove the numbers on the second row
       contents.shift()
-
-      const contentsLength = contents.shift()
+      // remove the palette length
+      contents.shift()
 
       const palette = contents.map(content => {
         if (content === '') return null
@@ -77,8 +80,8 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
         }
       }).filter(color => !!color)
 
-      changeContents(e.target.result)
-      changePalette(palette)
+      setError(null)
+      setPalette(palette)
     }
 
     fr.readAsText(files[0])
@@ -94,8 +97,8 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
         <ModalHeader>Import</ModalHeader>
         <MicroPalette palette={palette} />
         <div>
-          <Warning>/!\ Only for a JASC PAL atm, will try later importing different swatches/palettes</Warning>
-          { error && <p>{error.message}</p>}
+          { !error && palette.length === 0 && <Alert type={Alert.TYPES.WARNING}>/!\ Only for a JASC PAL atm, will try later importing different swatches/palettes</Alert> }
+          { error && <Alert type={Alert.TYPES.ERROR}>{error.message}</Alert>}
           <FormRow>
             <p><label htmlFor="file">Filename:</label></p>
             <input onChange={handleFileChange} accept=".pal" type="file" name="file" />

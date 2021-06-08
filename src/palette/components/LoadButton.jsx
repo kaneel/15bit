@@ -2,8 +2,8 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowReturnLeft, ArrowBarUp } from '@styled-icons/bootstrap'
 
-import { PrimaryButton, SecondaryButton } from './Button'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
+import { PrimaryButton, SecondaryButton } from '../../components/Button'
+import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
 import { MicroPalette } from './Palette'
 
 const LoadForm = styled.form`
@@ -70,9 +70,9 @@ const PaletteItem = styled.li`
 
 const LoadButtonForm = ({ onLoadSubmit }) => {
   const modalContext = useContext(ModalContext)
-  const [palettes, changePalettes] = useState(JSON.parse(localStorage.getItem('palettes')||'{}'))
+  const [palettes, setPalettes] = useState(JSON.parse(localStorage.getItem('palettes')||'{}'))
 
-  const onLoad = useCallback((name, palette) => {
+  const onLoad = useCallback((_, palette) => {
     onLoadSubmit(palette)
     modalContext.closeModal()
   }, [palettes])
@@ -81,7 +81,7 @@ const LoadButtonForm = ({ onLoadSubmit }) => {
     delete palettes[name]
     let newPalettes = { ...palettes }
     localStorage.setItem('palettes', JSON.stringify(newPalettes))
-    changePalettes(newPalettes)
+    setPalettes(newPalettes)
   }, [palettes])
 
   return (

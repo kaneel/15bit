@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import Color, { ColorBlock } from './Color'
+import Color, { ColorBlock } from '../../components/Color'
 
 const Overlay = styled.div`
   position: absolute;

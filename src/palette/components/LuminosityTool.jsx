@@ -2,58 +2,15 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowReturnLeft, Check2, Sun } from '@styled-icons/bootstrap'
 
-import { convertRGBToHex } from '../helpers'
-import Slider from './Slider'
+import { convertRGBToHex } from '../../helpers'
+import Slider from '../../components/Slider'
 import { PaletteSelector } from './Palette'
-import { PrimaryButton, SecondaryButton } from './Button'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
+import { PrimaryButton, SecondaryButton } from '../../components/Button'
+import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
 
 const ModalSubheader = styled.h2`
   text-align: left;
 `
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'selectColour': {
-      const { palette, selected } = state
-      const { index, modifiers } = action.payload
-      const color = palette[index]
-
-      if (modifiers.includes('Meta')) {
-        if (selected.includes(index)) {
-          return { ...state, selected: selected.filter(i => i !== index) }
-        }
-        else {
-          return { ...state, selected: [...selected, index] }
-        }
-      }
-
-
-      if (modifiers.includes('Shift') && selected.length > 0) {
-        const newSelected = (function(array, end) {
-          const last = array.pop()
-          const newArr = new Array(end > last ? end - last + 1 : last - end + 1)
-            .fill(0)
-            .map((_, i) => {
-              return end > last ? last + i : last - i
-            })
-
-          return [...array, ...newArr]
-        }([...selected], index))
-
-        return { ...state, selected: newSelected }
-      }
-
-      return { ...state, selected: [index] }
-    }
-    case 'changeLuminosity': {
-      return {
-        ...state,
-        luminosity: action.payload
-      }
-    }
-  }
-}
 
 const LuminosityToolContentForm = styled.form`
   position: absolute;
@@ -90,18 +47,18 @@ const applyLuminosity = (selected, value) => ({ r, g, b, hex }, i) => {
 
 const LuminosityToolContent = ({ palette, submitLuminosity }) => {
   const modalContext = useContext(ModalContext)
-  const [selected, changeSelected] = useState([])
-  const [luminosity, changeLuminosity] = useState(0)
-  const [statePal, changePalette] = useState([...palette])
+  const [selected, setSelected] = useState([])
+  const [luminosity, setLuminosity] = useState(0)
+  const [statePal, setPalette] = useState([...palette])
 
   const onLuminosityChange = useCallback(({ target: { value } }) => {
-    changePalette(palette.map(applyLuminosity(selected, parseInt(value, 10))))
-    changeLuminosity(parseInt(value, 10))
+    setPalette(palette.map(applyLuminosity(selected, parseInt(value, 10))))
+    setLuminosity(parseInt(value, 10))
   }, [statePal, selected, luminosity])
 
   const onSelect = useCallback((newSelected) => {
     onLuminosityChange({ target: { value: 0 }});
-    changeSelected(newSelected)
+    setSelected(newSelected)
   }, [ onLuminosityChange ])
 
   return (

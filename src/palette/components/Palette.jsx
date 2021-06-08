@@ -1,9 +1,9 @@
 import React, { useState, useContext, useCallback } from 'react'
 import styled from 'styled-components'
 
-import KeyboardContext from '../context/Keyboard'
+import KeyboardContext from '../../context/Keyboard'
 import PaletteColor, { PaletteColorWrapper } from './PaletteColor'
-import Color, { ColorBlock } from './Color'
+import Color, { ColorBlock } from '../../components/Color'
 
 const PaletteWrapper = styled.ul`
   display: flex;

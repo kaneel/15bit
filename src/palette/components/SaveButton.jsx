@@ -2,9 +2,9 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowReturnLeft, Save } from '@styled-icons/bootstrap'
 
-import { PrimaryButton, SecondaryButton } from './Button'
-import Warning from './Warning'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
+import { PrimaryButton, SecondaryButton } from '../../components/Button'
+import Alert from '../../components/Alert'
+import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
 import { MicroPalette } from './Palette'
 
 const SaveForm = styled.form`
@@ -34,7 +34,7 @@ const FormRow = styled.div`
 
 const SaveButtonForm = ({ palette } ) => {
   const modalContext = useContext(ModalContext)
-  const [ name, changeName ] = useState('palette')
+  const [ name, setName ] = useState('palette')
   const palettes = JSON.parse(localStorage.getItem('palettes')||'{}')
 
   const onSave = useCallback((e) => {
@@ -50,11 +50,11 @@ const SaveButtonForm = ({ palette } ) => {
         <ModalHeader>Save</ModalHeader>
         <div>
           { !!palettes[name] && (
-            <Warning>A palette with this name already exist, it will be overwritten</Warning> 
+            <Alert type={Alert.TYPES.WARNING}>A palette with this name already exist, it will be overwritten</Alert> 
           ) }
           <FormRow>
             <p><label htmlFor="name">Name:</label></p>
-            <input type="text" name="name" value={name} onChange={({target: {value }}) => changeName(value)} />
+            <input type="text" name="name" value={name} onChange={({target: {value }}) => setName(value)} />
           </FormRow>
         </div>
         <MicroPalette palette={palette} />

@@ -2,9 +2,9 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowReturnLeft, FileArrowDown } from '@styled-icons/bootstrap'
 
-import { PrimaryButton, SecondaryButton, ButtonGroup } from './Button'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
-import { convertRGB15toRGB24 } from '../helpers'
+import { PrimaryButton, SecondaryButton, ButtonGroup } from '../../components/Button'
+import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
+import { convertRGB15toRGB24 } from '../../helpers'
 
 const formats = {
   C: { type: '.c', name: 'C', method: buildC },
@@ -101,9 +101,9 @@ const FormRow = styled.div`
 
 const ExportButtonForm = ({ palette } ) => {
   const modalContext = useContext(ModalContext)
-  const [ filename, changeFilename ] = useState('palette')
-  const [ variable, changeVariable ] = useState('myPal')
-  const [ format, changeFormat ] = useState('C')
+  const [ filename, setFilename ] = useState('palette')
+  const [ variable, setVariable ] = useState('myPal')
+  const [ format, setFormat ] = useState('C')
 
   const onExport = useCallback((e) => {
     e.preventDefault()
@@ -118,18 +118,18 @@ const ExportButtonForm = ({ palette } ) => {
           <FormRow>
             <ButtonGroup>
               { Object.entries(formats).map(([key, { type, name }]) => (
-                <SecondaryButton key={key} type="button" onClick={(e) => changeFormat(name)} active={name === format}>{type}</SecondaryButton>
+                <SecondaryButton key={key} type="button" onClick={(e) => setFormat(name)} active={name === format}>{type}</SecondaryButton>
               )) }
             </ButtonGroup>
           </FormRow>
           <FormRow>
             <p><label htmlFor="filename">Filename:</label></p>
-            <input type="text" name="filename" value={filename} onChange={({target: {value }}) => changeFilename(value)} />
+            <input type="text" name="filename" value={filename} onChange={({target: {value }}) => setFilename(value)} />
           </FormRow>
           {format === formats.C.name && (
             <FormRow>
               <p><label htmlFor="variable">Variable name:</label></p>
-              <input type="text" name="variable" value={variable} onChange={({target: {value }}) => changeVariable(value)} />
+              <input type="text" name="variable" value={variable} onChange={({target: {value }}) => setVariable(value)} />
             </FormRow>
           )}
         </div>

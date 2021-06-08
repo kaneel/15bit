@@ -2,9 +2,9 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { ArrowReturnLeft, ArrowCounterclockwise } from '@styled-icons/bootstrap'
 
-import { PrimaryButton, SecondaryButton } from './Button'
-import Warning from './Warning'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../context/Modal'
+import { PrimaryButton, SecondaryButton } from '../../components/Button'
+import Alert from '../../components/Alert'
+import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
 
 const ResetForm = styled.form`
   position: absolute;
@@ -35,7 +35,7 @@ const ResetButtonForm = ({ onReset } ) => {
     <ResetForm onSubmit={resetPalette}>
       <ModalContentWrapper>
         <ModalHeader>Reset</ModalHeader>
-        <Warning>Are you sure you want to reset the palette ?</Warning>
+        <Alert type={Alert.TYPES.WARNING}>Are you sure you want to reset the palette ?</Alert>
         <ModalActions>
           <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
           <PrimaryButton type="submit"><ArrowCounterclockwise />OK!</PrimaryButton>
