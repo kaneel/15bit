@@ -9,9 +9,11 @@ const PaletteWrapper = styled.ul`
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  margin: 0 auto;
-  padding: 2px 2px;
+  margin: 2px 2px;
+  padding: 0;
   list-style: none;
+
+  ${props => props.withBorder && `border: 1px solid;` }
 `
 
 const PaletteButton = styled.button`
@@ -124,7 +126,20 @@ const PaletteOverlay = styled.div`
 const PaletteSection = styled.section`
   position: relative;
   margin: 0 auto;
-  width: 1004px;
+  width: 1006px;
+  text-align: left;
+`
+
+const PaletteLength = styled.p`
+  display: inline-block;
+  border: 1px solid;
+  margin: 0;
+  padding: 0 18px;
+  margin: 2px 0 -2px 2px;
+  border-bottom: 0;
+  line-height: 2.2;
+  transform: translateY(1px);
+  background: #fff;
 `
 
 const ScrollableDiv = styled.div`
@@ -149,8 +164,9 @@ const MainPalette = ({palette, onDelete, onSwap, onPick}) => {
 
   return (
     <PaletteSection>
+      { palette.length > 10 && <PaletteLength>Palette length: <strong>{palette.length}</strong></PaletteLength> }
       { selected > -1 && (<PaletteOverlay onClick={() => changeSelected(-1)}/>)}
-      <PaletteWrapper>
+      <PaletteWrapper withBorder={palette.length > 0}>
         { palette.map(({hex}, i) => (
           <ColorItem key={i} selected={i===selected}>
             { selected !== i && <DeleteButton onClick={() => onDelete(i)}>X</DeleteButton>}
