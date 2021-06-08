@@ -8,6 +8,7 @@ import { ModalProvider } from './context/Modal'
 import Slider from './components/Slider'
 import Color from './components/Color'
 import Palette from './components/Palette'
+import ResetButton from './components/ResetButton'
 import SaveButton from './components/SaveButton'
 import LoadButton from './components/LoadButton'
 import ExportButton from './components/ExportButton'
@@ -136,6 +137,7 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
     margin: 0;
     font-family: Helvetica;
+    line-height: 1.2;
   }
 `
 
@@ -163,6 +165,7 @@ const App = () => {
       <ModalProvider>
         <AppWrapper>
           <PaletteToolsSection>
+            <ResetButton onReset={() => changePalette([])} />
             <SaveButton palette={palette} />
             <LoadButton onLoadSubmit={changePalette} />
             <ExportButton palette={palette} />
