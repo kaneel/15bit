@@ -17,7 +17,6 @@ const CodeArea = ({ value, onGenerate, onChange }) => {
   const generate = useCallback(
     (e) => {
       e.preventDefault()
-      console.log('yeah baby')
 
       const imageData = new ImageData(240, 160)
       setError(null)

@@ -19,9 +19,10 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const AppWrapper = styled.div`
-  max-width: 1200px;
   text-align: center;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 `
 
 const App = () => {

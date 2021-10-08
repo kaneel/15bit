@@ -9,8 +9,8 @@ const Container = styled.div`
   border: 1px solid;
   display: flex;
   background: #999;
-  width: 600px;
-  height: 600px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 
   canvas {
