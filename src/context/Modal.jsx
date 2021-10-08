@@ -1,19 +1,21 @@
 import React, { Component, createContext } from 'react'
 import styled from 'styled-components'
 
-const initialState = { isOpen: false, content: null };
-const ModalContext = createContext({...initialState});
+const initialState = { isOpen: false, content: null }
+const ModalContext = createContext({ ...initialState })
 
 const ModalWrapper = styled.div`
   display: none;
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 1000;
 
-  ${props => props.isOpen && `
+  ${(props) =>
+    props.isOpen &&
+    `
     display: block;
   `}
 `
@@ -24,7 +26,7 @@ const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, .4);
+  background: rgba(0, 0, 0, 0.4);
   z-index: 1;
 `
 
@@ -70,7 +72,7 @@ class ModalProvider extends Component {
 
     this.setState({
       content,
-      isOpen: true
+      isOpen: true,
     })
   }
 
@@ -79,13 +81,13 @@ class ModalProvider extends Component {
 
     this.setState({
       content: null,
-      isOpen: false
+      isOpen: false,
     })
   }
 
   onKeyup({ key }) {
     if (key !== 'Escape') {
-      return;
+      return
     }
 
     this.closeModal()
@@ -96,18 +98,18 @@ class ModalProvider extends Component {
     const { content, isOpen } = this.state
 
     return (
-      <ModalContext.Provider value={{
-        ...this.state, 
-        openModal: this.openModal, 
-        closeModal: this.closeModal
-      }}>
+      <ModalContext.Provider
+        value={{
+          ...this.state,
+          openModal: this.openModal,
+          closeModal: this.closeModal,
+        }}
+      >
         <ModalWrapper isOpen={isOpen}>
           <ModalOverlay onClick={this.closeModal} />
-          <ModalContent>
-            { content && content() }
-          </ModalContent>
+          <ModalContent>{content && content()}</ModalContent>
         </ModalWrapper>
-        { children }
+        {children}
       </ModalContext.Provider>
     )
   }
@@ -115,5 +117,3 @@ class ModalProvider extends Component {
 
 export default ModalContext
 export { ModalProvider, ModalHeader, ModalActions, ModalContentWrapper }
-
-

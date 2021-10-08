@@ -19,7 +19,7 @@ const SliderInput = styled.input`
 
 const SliderRow = styled.div`
   display: flex;
-  margin: 0 0 .5em;
+  margin: 0 0 0.5em;
 
   input {
     margin: 0 4px;
@@ -29,7 +29,8 @@ const SliderRow = styled.div`
 const SliderButtonGroup = styled.div`
   display: flex;
 
-  button, input {
+  button,
+  input {
     margin: 0;
     border: 1px solid;
   }
@@ -57,16 +58,38 @@ const SliderButtonGroup = styled.div`
   }
 `
 
-
 const Slider = ({ label, name, value, onChange, min = 0, max = 0x1f }) => (
   <SliderWrapper>
     <SliderLabel htmlFor={name}>{label}</SliderLabel>
     <SliderRow>
-      <input type="range" min={min} max={max} value={value} name={name} onChange={onChange}/>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        name={name}
+        onChange={onChange}
+      />
       <SliderButtonGroup>
-        <SecondaryButton type="button" small onClick={() => onChange({target: { value: Math.max(min, value - 1) } })}>-</SecondaryButton>
-        <SliderInput readOnly="readonly" type="text" value={value}  />
-        <SecondaryButton type="button" small onClick={() => onChange({target: { value: Math.min(max, value + 1) } })}>+</SecondaryButton>
+        <SecondaryButton
+          type="button"
+          small
+          onClick={() =>
+            onChange({ target: { value: Math.max(min, value - 1) } })
+          }
+        >
+          -
+        </SecondaryButton>
+        <SliderInput readOnly="readonly" type="text" value={value} />
+        <SecondaryButton
+          type="button"
+          small
+          onClick={() =>
+            onChange({ target: { value: Math.min(max, value + 1) } })
+          }
+        >
+          +
+        </SecondaryButton>
       </SliderButtonGroup>
     </SliderRow>
   </SliderWrapper>

@@ -1,18 +1,18 @@
 import styled from 'styled-components'
 
 const TYPES = {
-  ERROR: "ERROR",
-  WARNING: "WARNING",
+  ERROR: 'ERROR',
+  WARNING: 'WARNING',
 }
 
 const Alert = styled.p`
   border: 1px solid currentColor;
   text-align: left;
-  padding: .5em;
+  padding: 0.5em;
   border-radius: 5px;
 
   ${({ type }) => {
-    switch(type) {
+    switch (type) {
       case TYPES.ERROR:
         return `color: red;`
       case TYPES.WARNING:
@@ -24,4 +24,3 @@ const Alert = styled.p`
 Alert.TYPES = TYPES
 
 export default Alert
-

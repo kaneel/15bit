@@ -4,7 +4,11 @@ import { ArrowReturnLeft, ArrowCounterclockwise } from '@styled-icons/bootstrap'
 
 import { PrimaryButton, SecondaryButton } from '../../components/Button'
 import Alert from '../../components/Alert'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
+import ModalContext, {
+  ModalHeader,
+  ModalContentWrapper,
+  ModalActions,
+} from '../../context/Modal'
 
 const ResetForm = styled.form`
   position: absolute;
@@ -22,12 +26,12 @@ const ResetForm = styled.form`
   }
 `
 
-const ResetButtonForm = ({ onReset } ) => {
+const ResetButtonForm = ({ onReset }) => {
   const modalContext = useContext(ModalContext)
 
   const resetPalette = useCallback((e) => {
     e.preventDefault()
-    modalContext.closeModal();
+    modalContext.closeModal()
     onReset()
   }, [])
 
@@ -35,23 +39,37 @@ const ResetButtonForm = ({ onReset } ) => {
     <ResetForm onSubmit={resetPalette}>
       <ModalContentWrapper>
         <ModalHeader>Reset</ModalHeader>
-        <Alert type={Alert.TYPES.WARNING}>Are you sure you want to reset the palette ?</Alert>
+        <Alert type={Alert.TYPES.WARNING}>
+          Are you sure you want to reset the palette ?
+        </Alert>
         <ModalActions>
-          <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
-          <PrimaryButton type="submit"><ArrowCounterclockwise />OK!</PrimaryButton>
+          <SecondaryButton type="button" onClick={modalContext.closeModal}>
+            <ArrowReturnLeft />
+            Cancel
+          </SecondaryButton>
+          <PrimaryButton type="submit">
+            <ArrowCounterclockwise />
+            OK!
+          </PrimaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </ResetForm>
   )
 }
 
-const ResetButton = ({onReset}) => {
+const ResetButton = ({ onReset }) => {
   const modalContext = useContext(ModalContext)
-  const modalContent = () => (<ResetButtonForm onReset={onReset} />)
+  const modalContent = () => <ResetButtonForm onReset={onReset} />
 
-  return <PrimaryButton small type="button" onClick={() => modalContext.openModal(modalContent)}><ArrowCounterclockwise /> Reset</PrimaryButton>
+  return (
+    <PrimaryButton
+      small
+      type="button"
+      onClick={() => modalContext.openModal(modalContent)}
+    >
+      <ArrowCounterclockwise /> Reset
+    </PrimaryButton>
+  )
 }
 
-export default ResetButton 
-
-
+export default ResetButton

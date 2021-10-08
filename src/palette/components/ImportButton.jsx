@@ -4,7 +4,11 @@ import { ArrowReturnLeft, FileArrowUp } from '@styled-icons/bootstrap'
 
 import { PrimaryButton, SecondaryButton } from '../../components/Button'
 import Alert from '../../components/Alert'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
+import ModalContext, {
+  ModalHeader,
+  ModalContentWrapper,
+  ModalActions,
+} from '../../context/Modal'
 import { MicroPalette } from './Palette'
 import { convertRGBToHex, convertRGB24toRGB15 } from '../../helpers'
 
@@ -25,7 +29,7 @@ const ImportForm = styled.form`
 `
 
 const FormRow = styled.div`
-  margin: .5em 0;
+  margin: 0.5em 0;
   text-align: left;
 
   p {
@@ -38,12 +42,14 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
   const [palette, setPalette] = useState([])
   const [error, setError] = useState(null)
 
-  const handleFileChange = useCallback(e => {
-    const { target: { files } } = e
+  const handleFileChange = useCallback((e) => {
+    const {
+      target: { files },
+    } = e
     e.preventDefault()
 
-    const fr  = new FileReader()
-    fr.onload = e => {
+    const fr = new FileReader()
+    fr.onload = (e) => {
       const contents = e.target.result.split('\n')
 
       /*
@@ -57,7 +63,7 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
       if (header !== 'JASC-PAL') {
         setPalette([])
         setError(new Error('Not a JASC PAL'))
-        return;
+        return
       }
 
       // remove the numbers on the second row
@@ -65,20 +71,22 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
       // remove the palette length
       contents.shift()
 
-      const palette = contents.map(content => {
-        if (content === '') return null
+      const palette = contents
+        .map((content) => {
+          if (content === '') return null
 
-        const [ rr, gg, bb ] = content.split(' ')
-        const {r, g, b} = convertRGB24toRGB15({ r: rr, g: gg, b: bb })
-        const hex = convertRGBToHex({r, g, b})
+          const [rr, gg, bb] = content.split(' ')
+          const { r, g, b } = convertRGB24toRGB15({ r: rr, g: gg, b: bb })
+          const hex = convertRGBToHex({ r, g, b })
 
-        return {
-          r,
-          g, 
-          b, 
-          hex 
-        }
-      }).filter(color => !!color)
+          return {
+            r,
+            g,
+            b,
+            hex,
+          }
+        })
+        .filter((color) => !!color)
 
       setError(null)
       setPalette(palette)
@@ -88,25 +96,46 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
   })
 
   return (
-    <ImportForm onSubmit={e => { 
+    <ImportForm
+      onSubmit={(e) => {
         e.preventDefault()
         onPaletteSubmit(palette)
         modalContext.closeModal()
-      }} enctype="multipart/form-data">
+      }}
+      enctype="multipart/form-data"
+    >
       <ModalContentWrapper>
         <ModalHeader>Import</ModalHeader>
         <MicroPalette palette={palette} />
         <div>
-          { !error && palette.length === 0 && <Alert type={Alert.TYPES.WARNING}>/!\ Only for a JASC PAL atm, will try later importing different swatches/palettes</Alert> }
-          { error && <Alert type={Alert.TYPES.ERROR}>{error.message}</Alert>}
+          {!error && palette.length === 0 && (
+            <Alert type={Alert.TYPES.WARNING}>
+              /!\ Only for a JASC PAL atm, will try later importing different
+              swatches/palettes
+            </Alert>
+          )}
+          {error && <Alert type={Alert.TYPES.ERROR}>{error.message}</Alert>}
           <FormRow>
-            <p><label htmlFor="file">Filename:</label></p>
-            <input onChange={handleFileChange} accept=".pal" type="file" name="file" />
+            <p>
+              <label htmlFor="file">Filename:</label>
+            </p>
+            <input
+              onChange={handleFileChange}
+              accept=".pal"
+              type="file"
+              name="file"
+            />
           </FormRow>
         </div>
         <ModalActions>
-          <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
-          <PrimaryButton type="submit"><FileArrowUp />OK!</PrimaryButton>
+          <SecondaryButton type="button" onClick={modalContext.closeModal}>
+            <ArrowReturnLeft />
+            Cancel
+          </SecondaryButton>
+          <PrimaryButton type="submit">
+            <FileArrowUp />
+            OK!
+          </PrimaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </ImportForm>
@@ -115,10 +144,19 @@ const ImportButtonForm = ({ onPaletteSubmit }) => {
 
 const ImportButton = ({ onImportSubmit }) => {
   const modalContext = useContext(ModalContext)
-  const modalContent = () => (<ImportButtonForm onPaletteSubmit={onImportSubmit} />)
+  const modalContent = () => (
+    <ImportButtonForm onPaletteSubmit={onImportSubmit} />
+  )
 
-  return <PrimaryButton small type="button" onClick={() => modalContext.openModal(modalContent)}><FileArrowUp /> Import</PrimaryButton>
+  return (
+    <PrimaryButton
+      small
+      type="button"
+      onClick={() => modalContext.openModal(modalContent)}
+    >
+      <FileArrowUp /> Import
+    </PrimaryButton>
+  )
 }
 
 export default ImportButton
-

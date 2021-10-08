@@ -13,7 +13,7 @@ const PaletteWrapper = styled.ul`
   padding: 0;
   list-style: none;
 
-  ${props => props.withBorder && `border: 1px solid;` }
+  ${(props) => props.withBorder && `border: 1px solid;`}
 `
 
 const PaletteButton = styled.button`
@@ -44,7 +44,9 @@ const ColorItem = styled.li`
   width: 100px;
   height: 100px;
 
-  ${props => props.selected && `
+  ${(props) =>
+    props.selected &&
+    `
     z-index: 400;
   `}
 
@@ -67,7 +69,9 @@ const ColorItem = styled.li`
       z-index: 1;
     }
 
-    ${props => props.selected && `
+    ${(props) =>
+      props.selected &&
+      `
       ${PaletteColorWrapper} {
         position: relative;
         border: 0;
@@ -79,8 +83,7 @@ const ColorItem = styled.li`
           transform: translate(-4px, -4px);
         }
       }
-    `
-  }
+    `}
 `
 
 const SelectorColorItem = styled(ColorItem)`
@@ -93,7 +96,9 @@ const SelectorColorItem = styled(ColorItem)`
     }
   }
 
-  ${props => props.selected && `
+  ${(props) =>
+    props.selected &&
+    `
     ${ColorBlock} {
       position: absolute;
       border: 2px solid;
@@ -117,7 +122,7 @@ const PaletteOverlay = styled.div`
   right: 0;
   bottom: 0;
   z-index: 300;
-  background: rgba(255, 255, 255, .9);
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,27 +164,37 @@ const MicroColorItem = styled.li`
   }
 `
 
-const MainPalette = ({palette, onDelete, onSwap, onPick}) => {
-  const [selected, changeSelected] = useState(-1);
+const MainPalette = ({ palette, onDelete, onSwap, onPick }) => {
+  const [selected, changeSelected] = useState(-1)
 
   return (
     <PaletteSection>
-      { palette.length > 10 && <PaletteLength>Palette length: <strong>{palette.length}</strong></PaletteLength> }
-      { selected > -1 && (<PaletteOverlay onClick={() => changeSelected(-1)}/>)}
+      {palette.length > 10 && (
+        <PaletteLength>
+          Palette length: <strong>{palette.length}</strong>
+        </PaletteLength>
+      )}
+      {selected > -1 && <PaletteOverlay onClick={() => changeSelected(-1)} />}
       <PaletteWrapper withBorder={palette.length > 0}>
-        { palette.map(({hex}, i) => (
-          <ColorItem key={i} selected={i===selected}>
-            { selected !== i && <DeleteButton onClick={() => onDelete(i)}>X</DeleteButton>}
-            <PaletteColor hex={hex} selected={i===selected} onClick={() => changeSelected(i)}>
-              { selected === i && (
+        {palette.map(({ hex }, i) => (
+          <ColorItem key={i} selected={i === selected}>
+            {selected !== i && (
+              <DeleteButton onClick={() => onDelete(i)}>X</DeleteButton>
+            )}
+            <PaletteColor
+              hex={hex}
+              selected={i === selected}
+              onClick={() => changeSelected(i)}
+            >
+              {selected === i && (
                 <>
                   <PaletteButton onClick={() => onSwap(i)}>swap</PaletteButton>
                   <PaletteButton onClick={() => onPick(i)}>pick</PaletteButton>
                 </>
-              ) }
-          </PaletteColor>
+              )}
+            </PaletteColor>
           </ColorItem>
-        )) }
+        ))}
       </PaletteWrapper>
     </PaletteSection>
   )
@@ -194,16 +209,14 @@ function reducer(state, action) {
 
       if (modifiers.includes('Meta')) {
         if (selected.includes(index)) {
-          return { ...state, selected: selected.filter(i => i !== index) }
-        }
-        else {
+          return { ...state, selected: selected.filter((i) => i !== index) }
+        } else {
           return { ...state, selected: [...selected, index] }
         }
       }
 
-
       if (modifiers.includes('Shift') && selected.length > 0) {
-        const newSelected = (function(array, end) {
+        const newSelected = (function (array, end) {
           const last = array.pop()
           const newArr = new Array(end > last ? end - last + 1 : last - end + 1)
             .fill(0)
@@ -212,7 +225,7 @@ function reducer(state, action) {
             })
 
           return [...array, ...newArr]
-        }([...selected], index))
+        })([...selected], index)
 
         return { ...state, selected: newSelected }
       }
@@ -222,71 +235,75 @@ function reducer(state, action) {
     case 'changeLuminosity': {
       return {
         ...state,
-        luminosity: action.payload
+        luminosity: action.payload,
       }
     }
   }
 }
 
-const PaletteSelector = ({palette, selected, onSelect, maxSelection}) => {
+const PaletteSelector = ({ palette, selected, onSelect, maxSelection }) => {
   const { keys } = useContext(KeyboardContext)
 
-  let newState;
+  let newState
 
-  const selectColour = useCallback((index) => {
+  const selectColour = useCallback(
+    (index) => {
       const color = palette[index]
 
       if (keys.includes('Meta')) {
         if (selected.includes(index)) {
-          return onSelect(selected.filter(i => i !== index))
-        }
-        else {
-           return onSelect([...selected, index])
+          return onSelect(selected.filter((i) => i !== index))
+        } else {
+          return onSelect([...selected, index])
         }
       }
 
-
       if (keys.includes('Shift') && selected.length > 0) {
-         return onSelect((function(array, end) {
-          const last = array.pop()
-          const newArr = new Array(end > last ? end - last + 1 : last - end + 1)
-            .fill(0)
-            .map((_, i) => {
-              return end > last ? last + i : last - i
-            })
+        return onSelect(
+          (function (array, end) {
+            const last = array.pop()
+            const newArr = new Array(
+              end > last ? end - last + 1 : last - end + 1
+            )
+              .fill(0)
+              .map((_, i) => {
+                return end > last ? last + i : last - i
+              })
 
-          return [...array, ...newArr]
-        }([...selected], index)))
+            return [...array, ...newArr]
+          })([...selected], index)
+        )
       }
 
       onSelect([index])
-  }, [selected, keys])
-  
+    },
+    [selected, keys]
+  )
 
   return (
     <PaletteSection>
       <ScrollableDiv>
         <PaletteWrapper>
-          { palette.map(({hex}, i) => (
+          {palette.map(({ hex }, i) => (
             <SelectorColorItem key={i} selected={selected.includes(i)}>
               <Color hex={hex} onClick={() => selectColour(i)} small />
             </SelectorColorItem>
-          )) }
+          ))}
         </PaletteWrapper>
       </ScrollableDiv>
     </PaletteSection>
   )
 }
 
-const MicroPalette = ({palette}) => {
+const MicroPalette = ({ palette, onClick = () => {} }) => {
   return (
     <ScrollableDiv>
       <PaletteWrapper>
-        { palette.map(({hex}, i) => (
+        {palette.map(({ hex }, i) => (
           <MicroColorItem micro key={i}>
-            <Color hex={hex} small />
+            <Color hex={hex} small onClick={() => onClick(i)} />
           </MicroColorItem>
-        )) }
+        ))}
       </PaletteWrapper>
     </ScrollableDiv>
   )
@@ -294,4 +311,3 @@ const MicroPalette = ({palette}) => {
 
 export default MainPalette
 export { PaletteSelector, MicroPalette }
-

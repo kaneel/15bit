@@ -21,16 +21,15 @@ const Button = styled.button`
     margin: 0 10px 0 0;
   }
 
-  ${props => props.small && `font-size: 1rem; padding: 4px 8px;`}
-  ${props => props.active && `background: #eee`}
-
+  ${(props) => props.small && `font-size: 1rem; padding: 4px 8px;`}
+  ${(props) => props.active && `background: #eee`}
 `
 
 const PrimaryButton = styled(Button)``
 const SecondaryButton = styled(Button)``
 
 const ButtonGroup = styled.div`
-  display: flex; 
+  display: flex;
   justify-content: center;
   margin-left: 1px;
 
@@ -40,9 +39,4 @@ const ButtonGroup = styled.div`
   }
 `
 
-export {
-  PrimaryButton, 
-  SecondaryButton,
-  ButtonGroup
-}
-
+export { PrimaryButton, SecondaryButton, ButtonGroup }

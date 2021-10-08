@@ -3,7 +3,11 @@ import styled from 'styled-components'
 import { ArrowReturnLeft, ArrowBarUp } from '@styled-icons/bootstrap'
 
 import { PrimaryButton, SecondaryButton } from '../../components/Button'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
+import ModalContext, {
+  ModalHeader,
+  ModalContentWrapper,
+  ModalActions,
+} from '../../context/Modal'
 import { MicroPalette } from './Palette'
 
 const LoadForm = styled.form`
@@ -67,40 +71,55 @@ const PaletteItem = styled.li`
   }
 `
 
-
 const LoadButtonForm = ({ onLoadSubmit }) => {
   const modalContext = useContext(ModalContext)
-  const [palettes, setPalettes] = useState(JSON.parse(localStorage.getItem('palettes')||'{}'))
+  const [palettes, setPalettes] = useState(
+    JSON.parse(localStorage.getItem('palettes') || '{}')
+  )
 
-  const onLoad = useCallback((_, palette) => {
-    onLoadSubmit(palette)
-    modalContext.closeModal()
-  }, [palettes])
+  const onLoad = useCallback(
+    (_, palette) => {
+      onLoadSubmit(palette)
+      modalContext.closeModal()
+    },
+    [palettes]
+  )
 
-  const onDelete = useCallback((name) => {
-    delete palettes[name]
-    let newPalettes = { ...palettes }
-    localStorage.setItem('palettes', JSON.stringify(newPalettes))
-    setPalettes(newPalettes)
-  }, [palettes])
+  const onDelete = useCallback(
+    (name) => {
+      delete palettes[name]
+      let newPalettes = { ...palettes }
+      localStorage.setItem('palettes', JSON.stringify(newPalettes))
+      setPalettes(newPalettes)
+    },
+    [palettes]
+  )
 
   return (
     <LoadForm>
       <ModalContentWrapper>
         <ModalHeader>Load</ModalHeader>
         <PaletteList>
-          { Object.entries(palettes).map(([name, palette], i) => (
+          {Object.entries(palettes).map(([name, palette], i) => (
             <PaletteItem key={i}>
-              <PaletteButton type="button" onClick={() => onLoad(name, palette)}>
+              <PaletteButton
+                type="button"
+                onClick={() => onLoad(name, palette)}
+              >
                 <p>{name}</p>
                 <MicroPalette palette={palette} />
               </PaletteButton>
-              <PaletteDeleteButton type="button" onClick={() => onDelete(name)}>X</PaletteDeleteButton>
+              <PaletteDeleteButton type="button" onClick={() => onDelete(name)}>
+                X
+              </PaletteDeleteButton>
             </PaletteItem>
           ))}
         </PaletteList>
         <ModalActions>
-          <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
+          <SecondaryButton type="button" onClick={modalContext.closeModal}>
+            <ArrowReturnLeft />
+            Cancel
+          </SecondaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </LoadForm>
@@ -109,10 +128,17 @@ const LoadButtonForm = ({ onLoadSubmit }) => {
 
 const LoadButton = ({ onLoadSubmit }) => {
   const modalContext = useContext(ModalContext)
-  const modalContent = () => (<LoadButtonForm onLoadSubmit={onLoadSubmit} />)
+  const modalContent = () => <LoadButtonForm onLoadSubmit={onLoadSubmit} />
 
-  return <PrimaryButton small type="button" onClick={() => modalContext.openModal(modalContent)}><ArrowBarUp /> Load</PrimaryButton>
+  return (
+    <PrimaryButton
+      small
+      type="button"
+      onClick={() => modalContext.openModal(modalContent)}
+    >
+      <ArrowBarUp /> Load
+    </PrimaryButton>
+  )
 }
 
 export default LoadButton
-

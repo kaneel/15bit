@@ -27,7 +27,9 @@ const PaletteColorWrapper = styled.div`
     left: 0;
   }
 
-  ${props => props.selected && `
+  ${(props) =>
+    props.selected &&
+    `
     width: 200px;
     height: 200px;
 
@@ -47,10 +49,10 @@ const PaletteColorWrapper = styled.div`
   `}
 `
 
-const PaletteColor = ({children, selected, onClick, ...props}) => {
+const PaletteColor = ({ children, selected, onClick, ...props }) => {
   return (
     <PaletteColorWrapper selected={selected} onClick={onClick}>
-      { children && <Overlay>{children}</Overlay> }
+      {children && <Overlay>{children}</Overlay>}
       <Color small {...props} />
     </PaletteColorWrapper>
   )

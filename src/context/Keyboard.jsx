@@ -1,10 +1,15 @@
 import React, { Component, createContext } from 'react'
 
+const KEYS = {
+  SPACE: ' ',
+  ENTER: 'Enter',
+  META: 'Meta',
+}
 const initialState = { keys: [] }
-const KeyboardContext = createContext({...initialState})
+const KeyboardContext = createContext({ ...initialState })
 
 class KeyboardProvider extends Component {
-  state = {...initialState}
+  state = { ...initialState }
 
   constructor(props) {
     super(props)
@@ -29,7 +34,7 @@ class KeyboardProvider extends Component {
 
     if (!keys.includes(key)) {
       this.setState({
-        keys: [...keys, key ]
+        keys: [...keys, key],
       })
     }
   }
@@ -40,7 +45,7 @@ class KeyboardProvider extends Component {
 
     if (keys.includes(key)) {
       this.setState({
-        keys: keys.filter(c => key !== c)
+        keys: keys.filter((c) => key !== c),
       })
     }
   }
@@ -57,4 +62,4 @@ class KeyboardProvider extends Component {
 }
 
 export default KeyboardContext
-export { KeyboardProvider }
+export { KEYS, KeyboardProvider }

@@ -6,7 +6,11 @@ import { applyGradient } from '../../helpers'
 import Slider from '../../components/Slider'
 import { PaletteSelector } from './Palette'
 import { PrimaryButton, SecondaryButton } from '../../components/Button'
-import ModalContext, { ModalHeader, ModalContentWrapper, ModalActions } from '../../context/Modal'
+import ModalContext, {
+  ModalHeader,
+  ModalContentWrapper,
+  ModalActions,
+} from '../../context/Modal'
 
 const ModalSubheader = styled.h2`
   text-align: left;
@@ -14,7 +18,7 @@ const ModalSubheader = styled.h2`
 
 const GradientToolContentForm = styled.form`
   position: absolute;
-  width :1040px;
+  width: 1040px;
   margin: 0 auto;
   text-align: center;
   align-items: center;
@@ -34,41 +38,70 @@ const GradientToolContent = ({ palette, onGradientSubmit }) => {
   const [steps, setSteps] = useState(1)
   const [statePal, setPalette] = useState([...palette])
 
-  const [sel1, sel2] = selected;
+  const [sel1, sel2] = selected
 
-  const onStepsChanged = useCallback(({ target: { value } }) => {
-    if (selected.length === 2) {
-      setPalette(applyGradient(palette, selected, value + 2))
-    }
+  const onStepsChanged = useCallback(
+    ({ target: { value } }) => {
+      if (selected.length === 2) {
+        setPalette(applyGradient(palette, selected, value + 2))
+      }
 
-    setSteps(parseInt(value, 10))
-  }, [statePal, selected, sel1, sel2, steps])
+      setSteps(parseInt(value, 10))
+    },
+    [statePal, selected, sel1, sel2, steps]
+  )
 
-  const onSelectionChange = useCallback((newSelected) => {
-    if (newSelected.length > 2) return setSelected(newSelected.slice(0, 2))
+  const onSelectionChange = useCallback(
+    (newSelected) => {
+      if (newSelected.length > 2) return setSelected(newSelected.slice(0, 2))
 
-    if (newSelected.length === 1)  {
-      onStepsChanged({ target: { value: 1 }});
-    }
-    setSelected(newSelected)
-  }, [selected])
+      if (newSelected.length === 1) {
+        onStepsChanged({ target: { value: 1 } })
+      }
+      setSelected(newSelected)
+    },
+    [selected]
+  )
 
   const areSelectionsValid = Math.abs(selected[0] - selected[1]) === 1
 
   return (
-    <GradientToolContentForm onSubmit={e => { 
-      e.preventDefault()
-      onGradientSubmit(statePal)
-      modalContext.closeModal()
-    }}>
+    <GradientToolContentForm
+      onSubmit={(e) => {
+        e.preventDefault()
+        onGradientSubmit(statePal)
+        modalContext.closeModal()
+      }}
+    >
       <ModalContentWrapper>
         <ModalHeader>Gradient tool</ModalHeader>
         <ModalSubheader>Choose 2 adjacent colours</ModalSubheader>
-        <PaletteSelector onSelect={onSelectionChange} selected={selected} palette={statePal} maxSelection={2} />
-        <Slider label="Gradient steps" min={1} max={100} name="gradient-steps" value={steps} onChange={onStepsChanged} />
+        <PaletteSelector
+          onSelect={onSelectionChange}
+          selected={selected}
+          palette={statePal}
+          maxSelection={2}
+        />
+        <Slider
+          label="Gradient steps"
+          min={1}
+          max={100}
+          name="gradient-steps"
+          value={steps}
+          onChange={onStepsChanged}
+        />
         <ModalActions>
-          <SecondaryButton type="button" onClick={modalContext.closeModal}><ArrowReturnLeft />Cancel</SecondaryButton>
-          <PrimaryButton disabled={selected.length < 2 && areSelectionsValid} type="submit"><Check2 />OK</PrimaryButton>
+          <SecondaryButton type="button" onClick={modalContext.closeModal}>
+            <ArrowReturnLeft />
+            Cancel
+          </SecondaryButton>
+          <PrimaryButton
+            disabled={selected.length < 2 && areSelectionsValid}
+            type="submit"
+          >
+            <Check2 />
+            OK
+          </PrimaryButton>
         </ModalActions>
       </ModalContentWrapper>
     </GradientToolContentForm>
@@ -77,12 +110,22 @@ const GradientToolContent = ({ palette, onGradientSubmit }) => {
 
 const GradientTool = ({ palette, onGradientSubmit }) => {
   const modalContext = useContext(ModalContext)
-  const modalContent = () => (<GradientToolContent palette={palette} onGradientSubmit={onGradientSubmit} />)
+  const modalContent = () => (
+    <GradientToolContent
+      palette={palette}
+      onGradientSubmit={onGradientSubmit}
+    />
+  )
 
   return (
-    <SecondaryButton small disabled={!(palette.length > 1)} onClick={() => modalContext.openModal(modalContent)}>Gradient</SecondaryButton>
+    <SecondaryButton
+      small
+      disabled={!(palette.length > 1)}
+      onClick={() => modalContext.openModal(modalContent)}
+    >
+      Gradient
+    </SecondaryButton>
   )
 }
 
 export default GradientTool
-
