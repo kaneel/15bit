@@ -1,8 +1,21 @@
 import { useState, useCallback, useEffect } from 'react'
 
+const getOffset = (direction) =>
+  function m(node) {
+    if (node === document) return 0
+    const value = node[direction]
+
+    return value + m(node.parentNode)
+  }
+
+const getOffsetTop = getOffset('offsetTop')
+const getOffsetLeft = getOffset('offsetLeft')
+
 const calculatePosition = (position, oldDragPosition, newDragPosition) => {
-  const differenceX = oldDragPosition.pageX - newDragPosition.pageX
-  const differenceY = oldDragPosition.pageY - newDragPosition.pageY
+  const differenceX = newDragPosition.pageX - oldDragPosition.pageX
+  const differenceY = newDragPosition.pageY - oldDragPosition.pageY
+
+  console.log(position, oldDragPosition, newDragPosition)
 
   return {
     x: position.x + differenceX,
@@ -13,17 +26,19 @@ const calculatePosition = (position, oldDragPosition, newDragPosition) => {
 const getPosition = ({ current }, { x: startX, y: startY }) => {
   if (!current) {
     return {
-      top: startX,
-      left: startY,
+      x: startX,
+      y: startY,
     }
   }
 
   const bounding = current.getBoundingClientRect()
-  const { x, y } = bounding
+  const { top, left } = bounding
+  const x = left - getOffsetLeft(current)
+  const y = top - getOffsetTop(current)
 
   return {
-    x: x + startX,
-    y: y + startY,
+    x,
+    y,
   }
 }
 
@@ -44,7 +59,7 @@ const useDragger = (ref, start = { x: 0, y: 0 }) => {
 
     const { pageX, pageY } = e
 
-    const newPosition = calculatePosition(position, e, dragPosition)
+    const newPosition = calculatePosition(position, dragPosition, e)
 
     setDragPosition({ pageX, pageY })
     setPosition(newPosition)
@@ -55,7 +70,7 @@ const useDragger = (ref, start = { x: 0, y: 0 }) => {
 
     const { pageX, pageY } = e
 
-    const newPosition = calculatePosition(position, e, dragPosition)
+    const newPosition = calculatePosition(position, dragPosition, e)
 
     setDragPosition({ pageX, pageY })
     setPosition(newPosition)

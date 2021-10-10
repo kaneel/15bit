@@ -36,7 +36,10 @@ const PositionerOverlay = styled.div`
 
 const Positioner = ({ children, keys }) => {
   const containerRef = useRef()
-  const { position, startDragHandle } = useDragger(containerRef)
+  const { position, startDragHandle } = useDragger(containerRef, {
+    y: '50%',
+    x: '50%',
+  })
 
   return (
     <PositionerWrapper>

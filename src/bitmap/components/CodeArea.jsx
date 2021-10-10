@@ -6,10 +6,12 @@ import React, {
   useCallback,
 } from 'react'
 
+import { convertRGB15toRGB24 } from '../../helpers'
 import KeyboardContext, { KEYS } from '../../context/Keyboard'
 import Alert from '../../components/Alert'
+import { PrimaryButton } from '../../components/Button'
 
-const CodeArea = ({ value, onGenerate, onChange }) => {
+const CodeArea = ({ value, onGenerate, onChange, palette }) => {
   const [error, setError] = useState(null)
   const button = useRef(null)
   const { keys } = useContext(KeyboardContext)
@@ -22,11 +24,11 @@ const CodeArea = ({ value, onGenerate, onChange }) => {
       setError(null)
 
       try {
-        const fn = new Function('imageData', 'x', 'y', value)
+        const fn = new Function('imageData', 'x', 'y', 'pal', value)
 
         for (let y = 0; y < 160; y++) {
           for (let x = 0; x < 240; x++) {
-            fn(imageData, x, y)
+            fn(imageData, x, y, palette.map(convertRGB15toRGB24))
           }
         }
       } catch (e) {
@@ -46,12 +48,14 @@ const CodeArea = ({ value, onGenerate, onChange }) => {
   return (
     <>
       {error && <Alert type={Alert.TYPES.ERROR}>{error.message}</Alert>}
-      <p>fn(imageData, x, y)</p>
+      <p>fn(imageData, x, y, pal)</p>
       <form action="" onSubmit={generate}>
-        <textarea value={value} onChange={onChange} />
-        <button type="submit" ref={button}>
-          generate
-        </button>
+        <textarea rows="4" cols="50" value={value} onChange={onChange} />
+        <p>
+          <PrimaryButton type="submit" ref={button}>
+            generate
+          </PrimaryButton>
+        </p>
       </form>
     </>
   )

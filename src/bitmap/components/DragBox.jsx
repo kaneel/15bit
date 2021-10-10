@@ -79,9 +79,9 @@ const DragBox = ({
   return (
     <DragBoxWrapper
       ref={containerRef}
-      {...position}
       isZHigh={isZHigh}
       onClick={onClick}
+      {...position}
     >
       <DragBoxTopBar onMouseDown={startDragHandle}>
         <Button aria-label="minimise" onClick={minimiseHandle}>

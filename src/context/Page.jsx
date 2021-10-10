@@ -2,17 +2,35 @@ import React, { useState, useCallback, createContext } from 'react'
 import styled from 'styled-components'
 
 const PageButton = styled.button`
+  position: relative;
   appearance: none;
   border: none;
   background: none;
   padding: 0 20px;
   line-height: 100%;
   color: #fff;
-  cursor: pointer;
+  font-size: 0.8rem;
 
-  &:hover {
-    transform: scale(1.2);
-  }
+  ${(props) =>
+    props.as !== 'span' &&
+    ` 
+      cursor: pointer;
+      &:hover { transform: scale(1.2); }
+  `}
+
+  ${({ as }) =>
+    as === 'span' &&
+    `
+      &:after {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+      }
+  `}
+`
+
+const PageButtonActive = styled(PageButton)`
+  cursor: default;
 `
 
 const FixedNav = styled.nav`
@@ -65,14 +83,17 @@ const PageProvider = ({ pages: initialPages }) => {
       <FixedNav>
         {pages.length > 1 &&
           pages.map((page, i) => (
-            <PageButton key={i} onClick={() => setCurrent(i)}>
+            <PageButton
+              key={i}
+              as={current === i ? 'span' : undefined}
+              onClick={() => setCurrent(i)}
+            >
               {page.title}
             </PageButton>
           ))}
       </FixedNav>
       {pages.map((page, i) => {
         const { Component } = page
-
         const PageWithWrapper = withPageWrapper(Component)
 
         return <PageWithWrapper key={i} show={i === current} />
