@@ -1,6 +1,8 @@
-import React, { useCallback, useState, useRef } from 'react'
+import React, { useCallback, useContext, useState, useRef } from 'react'
 import useDragger from '../hooks/useDragger'
 import styled from 'styled-components'
+
+import BitmapUIContext from '../../context/BitmapUI'
 
 const DragBoxWrapper = styled.section`
   position: absolute;
@@ -62,11 +64,26 @@ const DragBox = ({
   onClick,
   isZHigh,
   header,
+  id,
   startPosition = { x: 0, y: 0 },
 }) => {
   const containerRef = useRef()
+  const { boxes, dispatch } = useContext(BitmapUIContext)
   const [isMinimised, setMinimised] = useState(false)
-  const { position, startDragHandle } = useDragger(containerRef, startPosition)
+  const onDragEnd = useCallback(
+    (newPosition) =>
+      dispatch({
+        type: 'onBoxPositionChange',
+        payload: { id, position: newPosition },
+      }),
+    []
+  )
+  console.log(boxes[id])
+  const { position, startDragHandle } = useDragger(
+    containerRef,
+    (boxes[id] || {}).position || startPosition,
+    onDragEnd
+  )
 
   const minimiseHandle = useCallback(
     (e) => {

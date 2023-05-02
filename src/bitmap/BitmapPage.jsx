@@ -8,6 +8,7 @@ import BrushArea from './components/BrushArea'
 import ZCorrecter from './components/ZCorrecter'
 import PaletteArea from './components/PaletteArea'
 import AppContext from '../context/App'
+import BitmapUIContext, { BitmapUIProvider } from '../context/BitmapUI'
 
 const PaletteBoxWrapper = styled.div`
   max-width: 300px;
@@ -21,6 +22,7 @@ const BitmapPageWrapper = styled.section`
 
 const BitmapPage = () => {
   const { paletteStore, bitmapStore, dispatch } = useContext(AppContext)
+  const { boxes, dispatch: dispatchUI } = useContext(BitmapUIContext)
   const color = paletteStore.palette[bitmapStore.currentColor]
 
   const pushData = useCallback(
@@ -33,25 +35,39 @@ const BitmapPage = () => {
     []
   )
 
+  const { brush } = boxes
+
   return (
-    <BitmapPageWrapper>
-      <ZCorrecter>
-        <DragBox header="Brush" id="brush" startPosition={{ x: 0, y: 0 }}>
-          <BrushArea />
-        </DragBox>
-        <DragBox header="Palette" id="palette" startPosition={{ x: 10, y: 10 }}>
-          <PaletteBoxWrapper>
-            <PaletteArea />
-          </PaletteBoxWrapper>
-        </DragBox>
-        <DragBox header="Code" id="code" startPosition={{ x: 20, y: 20 }}>
-          <CodeArea
-            onChange={setCode}
-            value={bitmapStore.code}
-            onGenerate={pushData}
-            palette={paletteStore.palette}
-          />
-        </DragBox>
+    <BitmapUIProvider>
+      <BitmapPageWrapper>
+        <ZCorrecter>
+          <DragBox header="Brush" id="brush" dispatch={dispatchUI} {...brush}>
+            <BrushArea />
+          </DragBox>
+          <DragBox
+            header="Palette"
+            id="palette"
+            dispatch={dispatchUI}
+            startPosition={{ x: 10, y: 10 }}
+          >
+            <PaletteBoxWrapper>
+              <PaletteArea />
+            </PaletteBoxWrapper>
+          </DragBox>
+          <DragBox
+            header="Code"
+            id="code"
+            dispatch={dispatchUI}
+            startPosition={{ x: 20, y: 20 }}
+          >
+            <CodeArea
+              onChange={setCode}
+              value={bitmapStore.code}
+              onGenerate={pushData}
+              palette={paletteStore.palette}
+            />
+          </DragBox>
+        </ZCorrecter>
         <Canvas
           disabled={!color}
           color={color}
@@ -59,8 +75,8 @@ const BitmapPage = () => {
           data={bitmapStore.data}
           onPaint={pushData}
         />
-      </ZCorrecter>
-    </BitmapPageWrapper>
+      </BitmapPageWrapper>
+    </BitmapUIProvider>
   )
 }
 
